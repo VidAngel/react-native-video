@@ -67,6 +67,8 @@ import com.google.android.exoplayer2.util.Util;
 
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
+import com.google.android.exoplayer2.source.MediaSourceFactory;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -84,7 +86,7 @@ class ReactExoplayerView extends FrameLayout implements
         BecomingNoisyListener,
         AudioManager.OnAudioFocusChangeListener,
         MetadataOutput,
-        AdsMediaSource.MediaSourceFactory {
+        MediaSourceFactory {
 
     private static final String TAG = "ReactExoplayerView";
 
@@ -148,6 +150,8 @@ class ReactExoplayerView extends FrameLayout implements
     private boolean mReportBandwidth = false;
     private boolean controls;
     private Uri adTagUrl;
+    private DrmSessionManager<?> drmSessionManager;
+
     // \ End props
 
     // React
@@ -473,6 +477,12 @@ class ReactExoplayerView extends FrameLayout implements
     public int[] getSupportedTypes() {
       // IMA does not support Smooth Streaming ads.
       return new int[] {C.TYPE_DASH, C.TYPE_HLS, C.TYPE_OTHER};
+    }
+
+    @Override
+    public MediaSourceFactory setDrmSessionManager(DrmSessionManager<?> drmSessionManager) {
+        this.drmSessionManager = drmSessionManager != null ? drmSessionManager : DrmSessionManager.getDummyDrmSessionManager();
+        return this;
     }
 
 
